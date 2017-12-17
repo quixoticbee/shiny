@@ -1,0 +1,27 @@
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+setwd("C:/R Projects")
+
+industry <- read.csv("industry.csv")
+
+StateTotalPayroll <- sum(industry$Payroll_1000)
+
+ind2 <- industry %>%
+arrange(desc(Num_Emp)) %>%
+slice(1:8)
+
+
+ind3 <- ind2 %>%
+mutate(aveEmpSal=(Payroll_1000/Num_Emp)*1000) %>%
+mutate(ShareofEconomy=Payroll_1000/StateTotalPayroll)
+
+
+f <- ggplot(ind3, aes(Num_Emp, aveEmpSal, col = Industry)) +
+geom_point(aes(size=ShareofEconomy)) +
+labs(title ="Number of Employees versus Average Salary", x = "Employees", y = "Salary") +
+coord_fixed(ratio = 1/1) +
+coord_cartesian(xlim = c(10000, 60000), ylim = c(10000, 60000))
+
+f
