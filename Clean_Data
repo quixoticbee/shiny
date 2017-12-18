@@ -1,0 +1,28 @@
+library(dplyr)
+library(tidyverse)
+
+setwd("C:/R Projects/IndustryVermont")
+y2009 <- read.csv("2009.csv", stringsAsFactors=FALSE)
+y2010 <- read.csv("2010.csv", stringsAsFactors=FALSE)
+y2011 <- read.csv("2011.csv", stringsAsFactors=FALSE)
+y2012 <- read.csv("2012.csv", stringsAsFactors=FALSE)
+y2013 <- read.csv("2013.csv", stringsAsFactors=FALSE)
+y2014 <- read.csv("2014.csv", stringsAsFactors=FALSE)
+y2015 <- read.csv("2015.csv", stringsAsFactors=FALSE)
+
+indSer <- bind_rows(y2009, y2010, y2011, y2012, y2013, y2014, y2015)
+
+indSer$Emp <- str_replace_all(indSer$Emp, "b", "20")
+indSer$Emp <- str_replace_all(indSer$Emp, "f", "500")
+indSer$Emp <- str_replace_all(indSer$Emp, "S", "")
+indSer$Emp <- str_replace_all(indSer$Emp, "i", "5000")
+indSer$Emp <- str_replace_all(indSer$Emp, "a", "0")
+indSer$Emp <- str_replace_all(indSer$Emp, "h", "2500")
+indSer$Emp <- str_replace_all(indSer$Emp, "c", "200")
+indSer$Emp <- str_replace_all(indSer$Emp, "g", "1000")
+indSer$Emp <- str_replace_all(indSer$Emp, "e", "250")
+indSer$Payroll <- str_replace_all(indSer$Payroll, "D", "") 
+
+indSer2 <- transform(indSer, Emp = as.numeric(Emp), Payroll = as.numeric(Payroll))
+
+write.csv(indSer2, file = "Industry_Series.csv")
