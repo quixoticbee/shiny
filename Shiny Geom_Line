@@ -1,0 +1,52 @@
+library(shiny)
+library(ggplot2)
+library(dplyr)
+
+indSer <- read.csv("Industry_Series.csv", stringsAsFactors = FALSE)
+
+ui <- fluidPage(
+	titlePanel("Industry Employment and Salaries: 2009 - 2015"),
+	sidebarLayout(
+		sidebarPanel(
+			uiOutput("sectorOutput")
+			),
+		mainPanel(
+				plotOutput("indplot")
+		)
+	)
+)
+server <- function(input, output) {
+
+output$sectorOutput <- renderUI({
+	selectInput("sectorInput", "Sector",
+						sort(unique(indSer$Sector)),
+						selected = "Agriculture, forestry, fishing and hunting")
+})
+
+filtered <- reactive({
+	if(is.null(input$sectorInput)) {
+		return(NULL)
+	}
+	
+	indSer %>%
+	filter(
+		Sector == input$sectorInput
+	
+	)
+ })
+ 
+output$indplot <- renderPlot ({
+	if(is.null(filtered())) {
+	return()
+	}
+
+	ggplot(filtered(), aes(Year, aveEmpSal, col = Sector, size = Emp)) +
+		geom_line() +
+		labs(title ="Number of Employees versus Average Salary", x = "Year", y = "Salary") +
+		coord_cartesian(xlim = c(2009, 2015), ylim = c(0, 180000)) +
+		guides(col = guide_legend(ncol = 1), size = guide_legend(title = "Number of Employees"))
+  
+})
+}
+
+shinyApp(ui = ui, server = server)
