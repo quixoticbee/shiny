@@ -23,6 +23,18 @@ indSer$Emp <- str_replace_all(indSer$Emp, "g", "1000")
 indSer$Emp <- str_replace_all(indSer$Emp, "e", "250")
 indSer$Payroll <- str_replace_all(indSer$Payroll, "D", "") 
 
-indSer2 <- transform(indSer, Emp = as.numeric(Emp), Payroll = as.numeric(Payroll))
+topSec <- c("Health care and social assistance", "Manufacturing", 
+"Professional, scientific, and technical services",
+"Retail trade", "Construction", "Finance and insurance", 
+"Wholesale trade", "Accommodation and food services", 
+"Educational services", "Information")
 
-write.csv(indSer2, file = "Industry_Series.csv")
+indSer2 <- transform(indSer, Emp = as.numeric(Emp), Payroll = as.numeric(Payroll))
+indSer3 <- mutate(indSer2, aveEmpSal=(Payroll/Emp)*1000)
+indSer3$aveEmpSal <- round(indSer3$aveEmpSal)
+
+indSer4 <- indSer3 %>%
+filter(Sector %in% topSec)
+
+
+write.csv(indSer4, file = "Industry_Series.csv")
